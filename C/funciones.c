@@ -6,7 +6,9 @@
 
 void menu(int *opcion){
 
-    printf("Ingrese una opción\n");
+    printf("-------------------------------------------------\n");
+    printf("                  MENÚ\n");
+    printf("-------------------------------------------------\n");
     printf("1. Insertar persona.\n");
     printf("2. Suprimir persona.\n");
     printf("3. Modificar datos de una persona.\n");
@@ -16,7 +18,7 @@ void menu(int *opcion){
     printf("7. Listar personas según la fuerza a la que perteneció.\n");
     printf("8. Listar personas según su mes de cumpleaños.\n");
     printf("9. Salir.\n");
-
+    printf("\n  Ingrese una opción: ");
     do {
         scanf("%d", opcion);
         fgetc(stdin);
@@ -146,10 +148,11 @@ void pedirFuerza(Tfuerza *fuerza){
     int opcion;
     do{
         printf("Ingrese la fuerza a la que pertenecio:\n");
-        printf("1) Marina\n");
-        printf("2) Gendarmeria\n");
-        printf("3) Ejército\n");
-        printf("4) Aeronáutica\n");
+        printf("  1) Marina\n");
+        printf("  2) Gendarmeria\n");
+        printf("  3) Ejército\n");
+        printf("  4) Aeronáutica\n");
+        printf("  Fuerza: ");
         scanf("%d", &opcion);
         fgetc(stdin);
         switch (opcion){
@@ -205,15 +208,15 @@ void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
 
     nuevo->edad = calcularEdad(nuevo->nacimiento);
 
-    printf("Ingrese el ciudad: ");
+    printf("Ingrese la ciudad: ");
     fgets(nuevo->ciudad, 20, stdin);
     nuevo->ciudad[strlen(nuevo->ciudad)-1] = '\0';
 
-    printf("Ingrese el ciudad antes: ");
+    printf("Ingrese la ciudad antes de la guerra: ");
     fgets(nuevo->ciudadAntes, 20, stdin);
     nuevo->ciudadAntes[strlen(nuevo->ciudadAntes)-1] = '\0';
 
-    printf("Ingrese el dirección postal: ");
+    printf("Ingrese la dirección postal: ");
     fgets(nuevo->DP, 30, stdin);
     nuevo->DP[strlen(nuevo->DP)-1] = '\0';
 
@@ -226,7 +229,7 @@ void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
     nuevo->tel[strlen(nuevo->tel)-1] = '\0';
 
     do{
-        printf("Fallecido (0), vivo (1): ");
+        printf("Fallecio (0), Vive (1): ");
         scanf("%d", &opcion);
         fgetc(stdin);
         switch (opcion){
@@ -260,7 +263,7 @@ void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
     fgets(nuevo->beneficio, 20, stdin);
     nuevo->beneficio[strlen(nuevo->beneficio)-1] = '\0';
 
-    printf("Ingrese el codigo posta: ");
+    printf("Ingrese el codigo postal: ");
     fgets(nuevo->CP, 10, stdin);
     nuevo->CP[strlen(nuevo->CP)-1] = '\0';
 
@@ -270,11 +273,11 @@ void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
 
     pedirFuerza(&nuevo->fuerza);
 
-    printf("Ingrese el destino malvinas: ");
+    printf("Ingrese el destino en malvinas: ");
     fgets(nuevo->destino, 50, stdin);
     nuevo->destino[strlen(nuevo->destino)-1] = '\0';
 
-    printf("Ingrese el funcion malvinas: ");
+    printf("Ingrese la funcion malvinas: ");
     fgets(nuevo->funcion, 100, stdin);
     nuevo->funcion[strlen(nuevo->funcion)-1] = '\0';
 
@@ -282,7 +285,7 @@ void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
     fgets(nuevo->grado, 20, stdin);
     nuevo->grado[strlen(nuevo->grado)-1] = '\0';
 
-    printf("Ingrese el secuelas: ");
+    printf("Ingrese las secuelas: ");
     fgets(nuevo->secuelas, 200, stdin);
     nuevo->secuelas[strlen(nuevo->secuelas)-1] = '\0';
 }
@@ -291,7 +294,7 @@ void insertar(Tveteranos veteranos, Tpersona* nuevo){
     int pos, aux;
 
     if (llena(veteranos))
-        printf("No es posible agregar miembros, lista llena");
+        printf("No es posible agregar miembros, lista llena.");
     else {
         pos = buscarPosicion(veteranos, nuevo);
         for (aux = veteranos->cant -1; pos <= aux; aux--)
@@ -315,20 +318,22 @@ void suprimir(Tveteranos veteranos, int dni){
         veteranos->personas[pos] = veteranos->personas[pos+1];
     if (encontrado)
         veteranos->cant--;
-    else
-        printf("Dni no encontrado");
+    else printf("Dni no encontrado.");
 }
 
 void mostrar(const Tveteranos veteranos){
     int pos;
 
+    printf("-------------------------------------------------\n");
+    printf("        LISTADO DE TODAS LAS PERSONAS.\n");
+
     for (pos = 0; pos < veteranos->cant; pos++){
-        printf("-------------------------------------------------\n");
+        printf("-------------------------------------------------\n\n");
         printf("Nombre: %s\n", veteranos->personas[pos].nombre);
         printf("Apellido: %s\n", veteranos->personas[pos].apellido);
         printf("Dni: %d\n", veteranos->personas[pos].DNI);
         printf("Fecha de Nacimiento: %d / %d / %d\n", veteranos->personas[pos].nacimiento.dia, veteranos->personas[pos].nacimiento.mes, veteranos->personas[pos].nacimiento.anio);
-        printf("edad: %d\n", veteranos->personas[pos].edad);
+        printf("Edad: %d\n", veteranos->personas[pos].edad);
         printf("Ciudad De residencia: %s\n", veteranos->personas[pos].ciudad);
         printf("Ciudad De Nacimiento: %s\n", veteranos->personas[pos].ciudadAntes);
         printf("Dirección Postal: %s\n", veteranos->personas[pos].DP);
