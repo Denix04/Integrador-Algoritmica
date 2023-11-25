@@ -61,15 +61,19 @@ void cargarArchivo(const Tveteranos);
 Logico vacia(const Tveteranos);
 Logico llena(const Tveteranos);
 Logico validacionFecha(Tfecha);
+int calcularEdad(Tfecha);
+void recalcularEdades(Tveteranos);
 int buscarPosicion(const Tveteranos, const Tpersona*);
 Logico dniRepetido(const Tveteranos, int dni);
+void pedirFuerza(Tfuerza*);
 void cargarDatos(const Tveteranos, Tpersona*);
-void insertar(Tveteranos);
+void insertar(Tveteranos, Tpersona*);
 void suprimir(Tveteranos, int dni);
 void mostrar(const Tveteranos);
 void mostrarPorApellido(const Tveteranos, char* apellido);
 void modificar(Tveteranos, int dni);
 void mostrarFallecidos(const Tveteranos);
 void mostrarPorFuerza(const Tveteranos, Tfuerza fuerza);
+void ordenarPorMes(const Tveteranos, int mes);
 
 #endif
