@@ -3,6 +3,7 @@
 #include "estructuras.h"
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 
 void menu(int *opcion){
 
@@ -20,8 +21,9 @@ void menu(int *opcion){
     printf("9. Salir.\n");
     printf("\n  Ingrese una opción: ");
     do {
-        scanf("%d", opcion);
-        fgetc(stdin);
+        numeroValido(opcion);
+        if (*opcion < 1 || *opcion > 9) 
+            printf("\n  Opcion invalida, ingresela nuevamente: ");
     } while (*opcion < 1 || *opcion > 9);
 }
 
@@ -69,21 +71,43 @@ Logico llena(const Tveteranos veteranos){
 
 Logico validacionFecha(Tfecha fecha){
 
-    if (fecha.mes < 1 || fecha.mes >12 || fecha.dia < 1 || fecha.dia>31) {
+    if (fecha.mes < 1 || fecha.mes >12 || fecha.dia < 1 || fecha.dia>31)
         return FALSO;
-    }
-    if ((fecha.mes != 1 && fecha.mes != 3 && fecha.mes != 5 && fecha.mes != 7 && fecha.mes != 8 && fecha.mes != 10 && fecha.mes != 12) && fecha.dia==31){
+    if ((fecha.mes != 1 && fecha.mes != 3 && fecha.mes != 5 && fecha.mes != 7 && fecha.mes != 8 && fecha.mes != 10 && fecha.mes != 12) && fecha.dia==31)
         return FALSO;
-    }
-    if (fecha.mes == 2 && ((fecha.anio%4 == 0 && !(fecha.anio%100 == 0)) || (fecha.anio%100 == 0 && fecha.anio%400 == 0)) && fecha.dia > 29){
+    if (fecha.mes == 2 && ((fecha.anio%4 == 0 && !(fecha.anio%100 == 0)) || (fecha.anio%100 == 0 && fecha.anio%400 == 0)) && fecha.dia > 29)
         return FALSO;
-    }
-    if (fecha.mes == 2 && !((fecha.anio%4 == 0 && !(fecha.anio%100 == 0)) || 
-            (fecha.anio%100 == 0 && fecha.anio%400 == 0)) && fecha.dia > 28){
+    if (fecha.mes == 2 && !((fecha.anio%4 == 0 && !(fecha.anio%100 == 0)) || (fecha.anio%100 == 0 && fecha.anio%400 == 0)) && fecha.dia > 28)
         return FALSO;
-    }
     
     return VERDADERO;
+}
+
+Logico isNumeric(char *cadena){
+    
+    int i = 0;
+    if (cadena[i] == '-' || cadena[i] == '+')
+        i++;
+
+    while(cadena[i] != '\0'){
+        if(!isdigit(cadena[i]))
+            return FALSO;
+        i++;
+    }
+    return VERDADERO;
+}
+
+void numeroValido(int *numero){
+    char cadena[20];
+    scanf("%s", cadena);
+    fgetc(stdin);
+    
+    while(!isNumeric(cadena)){
+        printf("Número inválido. Ingrese nuevamente: ");
+        scanf("%s",cadena);
+        fgetc(stdin);
+    }
+    *numero = atoi(cadena);
 }
 
 int buscarPosicion(const Tveteranos veteranos, const Tpersona *persona){
@@ -129,9 +153,8 @@ int calcularEdad(Tfecha nacimiento){
 }
 
 void recalcularEdades(Tveteranos veteranos){
-    for(int pos = 0; pos < veteranos->cant; pos++){
-    veteranos->personas[pos].edad = calcularEdad(veteranos->personas[pos].nacimiento);
-    }
+    for(int pos = 0; pos < veteranos->cant; pos++)
+        veteranos->personas[pos].edad = calcularEdad(veteranos->personas[pos].nacimiento);
 }
 
 Logico dniRepetido(const Tveteranos veteranos, int dni){
@@ -153,8 +176,7 @@ void pedirFuerza(Tfuerza *fuerza){
         printf("  3) Ejército\n");
         printf("  4) Aeronáutica\n");
         printf("  Fuerza: ");
-        scanf("%d", &opcion);
-        fgetc(stdin);
+        numeroValido(&opcion);
         switch (opcion){
             case MARINA:
                 *fuerza = MARINA;
@@ -178,6 +200,10 @@ void pedirFuerza(Tfuerza *fuerza){
 void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
     int opcion;
 
+    printf("-------------------------------------------------\n");
+    printf("              CARGANDO USUARIO.\n");
+    printf("-------------------------------------------------\n");
+
     printf("Ingrese el nombre: ");
     fgets(nuevo->nombre, 20, stdin);
     nuevo->nombre[strlen(nuevo->nombre)-1] = '\0';
@@ -187,23 +213,21 @@ void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
     nuevo->apellido[strlen(nuevo->apellido)-1] = '\0';
 
     printf("Ingrese el DNI: ");
-    scanf("%d", &nuevo->DNI);
+    numeroValido(&nuevo->DNI);
     while (dniRepetido(veteranos, nuevo->DNI)){
         printf("Ya existe una persona con ese DNI, ingrese nuevamente: ");
-        scanf("%d", &nuevo->DNI);
-        fgetc(stdin);
+        numeroValido(&nuevo->DNI);
     }
 
     do {
         printf("Ingrese el dia de nacimiento: ");
-        scanf("%d", &nuevo->nacimiento.dia);
+        numeroValido(&nuevo->nacimiento.dia);
 
         printf("Ingrese el mes de nacimiento: ");
-        scanf("%d", &nuevo->nacimiento.mes);
+        numeroValido(&nuevo->nacimiento.mes);
 
         printf("Ingrese el año de nacimiento: ");
-        scanf("%d", &nuevo->nacimiento.anio);
-        fgetc(stdin);
+        numeroValido(&nuevo->nacimiento.anio);
     } while (!validacionFecha(nuevo->nacimiento));
 
     nuevo->edad = calcularEdad(nuevo->nacimiento);
@@ -230,8 +254,7 @@ void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
 
     do{
         printf("Fallecio (0), Vive (1): ");
-        scanf("%d", &opcion);
-        fgetc(stdin);
+        numeroValido(&opcion);
         switch (opcion){
             case 0:
                 nuevo->VF = FALSO;
@@ -248,14 +271,13 @@ void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
     if (!nuevo->VF){
         do {
             printf("Ingrese el dia de fallecimiento: ");
-            scanf("%d", &nuevo->fallecimiento.dia);
+            numeroValido(&nuevo->fallecimiento.dia);
 
             printf("Ingrese el mes de fallecimiento: ");
-            scanf("%d", &nuevo->fallecimiento.mes);
+            numeroValido(&nuevo->fallecimiento.mes);
 
             printf("Ingrese el año de fallecimiento: ");
-            scanf("%d", &nuevo->fallecimiento.anio);
-            fgetc(stdin);
+            numeroValido(&nuevo->fallecimiento.anio);
         } while (!validacionFecha(nuevo->fallecimiento));
     }
 
@@ -316,9 +338,11 @@ void suprimir(Tveteranos veteranos, int dni){
 
     for (pos; pos < veteranos->cant; pos++)
         veteranos->personas[pos] = veteranos->personas[pos+1];
-    if (encontrado)
+    if (encontrado){
         veteranos->cant--;
-    else printf("Dni no encontrado.");
+        printf("\nUsuario suprimido\n");
+    }
+    else printf("Dni no encontrado.\n");
 }
 
 void mostrar(const Tveteranos veteranos){
@@ -355,14 +379,14 @@ void mostrar(const Tveteranos veteranos){
         printf("Función en Malvinas: %s\n", veteranos->personas[pos].funcion);
         printf("Grado: %s\n", veteranos->personas[pos].grado);
         printf("Secuelas: %s\n", veteranos->personas[pos].secuelas);
-        printf("-------------------------------------------------\n");
     }
 }
 
 void mostrarPorApellido(const Tveteranos veteranos, char *apellido){
-    int pos = 0;
+    int pos = 0, cant = 0;
 
     while (pos < veteranos->cant && strcmp(veteranos->personas[pos].apellido, apellido)<=0){
+            
         if (strcmp(veteranos->personas[pos].apellido, apellido) == 0){
             printf("-------------------------------------------------\n");
             printf("Nombre: %s\n", veteranos->personas[pos].nombre);
@@ -389,10 +413,12 @@ void mostrarPorApellido(const Tveteranos veteranos, char *apellido){
             printf("Función en Malvinas: %s\n", veteranos->personas[pos].funcion);
             printf("Grado: %s\n", veteranos->personas[pos].grado);
             printf("Secuelas: %s\n", veteranos->personas[pos].secuelas);
-            printf("-------------------------------------------------\n");
+            cant++;
         }
         pos++;
     }
+    if (cant == 0)
+        printf("No hay personas con ese apellido.\n");
 }
 
 void modificar(Tveteranos veteranos, int dni){
@@ -425,8 +451,7 @@ void modificar(Tveteranos veteranos, int dni){
             printf("15. Destino en Malvinas\n");
             printf("16. Función en Malvinas\n");
             printf("17. Secuelas de la guerra\n");
-            scanf("%d", &opcion);
-            fgetc(stdin);
+            numeroValido(&opcion);
         } while (opcion < 1 || opcion > 18);
 
         switch (opcion){
@@ -443,14 +468,13 @@ void modificar(Tveteranos veteranos, int dni){
             case 3:
                 do {
                     printf("Ingrese el dia de nacimiento: ");
-                    scanf("%d", &modificado->nacimiento.dia);
+                    numeroValido(&modificado->nacimiento.dia);
 
                     printf("Ingrese el mes de nacimiento: ");
-                    scanf("%d", &modificado->nacimiento.mes);
+                    numeroValido(&modificado->nacimiento.mes);
 
                     printf("Ingrese el año de nacimiento: ");
-                    scanf("%d", &modificado->nacimiento.anio);
-                    fgetc(stdin);
+                    numeroValido(&modificado->nacimiento.anio);
                 } while (!validacionFecha(modificado->nacimiento));
                 modificado->edad = calcularEdad(modificado->nacimiento);
                 break;
@@ -487,8 +511,7 @@ void modificar(Tveteranos veteranos, int dni){
             case 10:
                 do{
                     printf("Fallecido (0), vivo (1): ");
-                    scanf("%d", &opcion);
-                    fgetc(stdin);
+                    numeroValido(&opcion);
                     switch (opcion){
                         case 0:
                             modificado->VF = FALSO;
@@ -505,13 +528,13 @@ void modificar(Tveteranos veteranos, int dni){
                 if (!modificado->VF){
                     do {
                         printf("Ingrese el dia de fallecimiento: ");
-                        scanf("%d", &modificado->fallecimiento.dia);
+                        numeroValido(&modificado->fallecimiento.dia);
 
                         printf("Ingrese el mes de fallecimiento: ");
-                        scanf("%d", &modificado->fallecimiento.mes);
+                        numeroValido(&modificado->fallecimiento.mes);
 
                         printf("Ingrese el año de fallecimiento: ");
-                        scanf("%d", &modificado->fallecimiento.anio);
+                        numeroValido(&modificado->fallecimiento.anio);
                     } while (!validacionFecha(modificado->fallecimiento));
                 }
                 break;
@@ -521,7 +544,7 @@ void modificar(Tveteranos veteranos, int dni){
                 modificado->beneficio[strlen(modificado->beneficio)-1] = '\0';
                 break;
             case 12:
-                printf("Ingrese el codigo posta: ");
+                printf("Ingrese el codigo postal: ");
                 fgets(modificado->CP, 10, stdin);
                 modificado->CP[strlen(modificado->CP)-1] = '\0';
                 break;
@@ -555,9 +578,32 @@ void modificar(Tveteranos veteranos, int dni){
         printf("No hay una persona con ese DNI\n");
 }
 
+void liberarLSE(Tfallecidos **fallecidos){
+    Tfallecidos *aux, *aux2;  
+    aux = *fallecidos;
+    while(*fallecidos!=NULL){
+        aux= *fallecidos;
+        *fallecidos = aux->next;
+        free(aux);
+    }
+}
+
+void liberarLDE(TlistaFuerza **fuerza){
+    TlistaFuerza *aux;  
+    aux = *fuerza;
+    while(*fuerza!=NULL){
+        aux = *fuerza; 
+        *fuerza = aux->next;
+        free(aux);
+    }
+}
+
 void mostrarFallecidos(const Tveteranos veteranos){
     Tfallecidos *fallecidos, *aux, *nuevo;
     int pos = 0;
+
+    printf("-------------------------------------------------\n");
+    printf("              VETERANOS FALLECIDOS.\n");
 
     fallecidos = (Tfallecidos*)malloc(sizeof(Tfallecidos));
     fallecidos->next = NULL;
@@ -574,9 +620,11 @@ void mostrarFallecidos(const Tveteranos veteranos){
         pos++;
     }
     aux = fallecidos->next;
-    if (aux == NULL) {
+    if (aux == NULL){
+        printf("-------------------------------------------------\n");
         printf("No hay fallecidos\n");
-    } else {
+    }
+    else {
         while (aux != NULL) {
             printf("-------------------------------------------------\n");
             printf("Nombre: %s\n", aux->info.nombre);
@@ -587,7 +635,9 @@ void mostrarFallecidos(const Tveteranos veteranos){
             aux = aux->next;
         }
     }
+    liberarLSE(&fallecidos);
 }
+
 void mostrarPorFuerza(const Tveteranos veteranos, Tfuerza fuerza){
     TlistaFuerza *cabeza, *cola, *nuevo, *aux;
     int pos;
@@ -612,9 +662,12 @@ void mostrarPorFuerza(const Tveteranos veteranos, Tfuerza fuerza){
         }
     }
     aux = cabeza->next;
-    if (aux->next == NULL)
+    if (aux->next == NULL){
+        printf("-------------------------------------------------\n");
         printf("No se encuentran personas pertenecientes a esa fuerza\n");
+    }
     while (aux->next != NULL) {
+        printf("-------------------------------------------------\n");
         printf("Nombre: %s\n", aux->persona.nombre);
         printf("Apellido: %s\n", aux->persona.apellido);
         printf("Dni: %d", aux->persona.DNI);
@@ -640,9 +693,10 @@ void mostrarPorFuerza(const Tveteranos veteranos, Tfuerza fuerza){
         printf("Función en Malvinas: %s\n", aux->persona.funcion);
         printf("Grado: %s\n", aux->persona.grado);
         printf("Secuelas: %s\n", aux->persona.secuelas);
-        printf("-------------------------------------------------\n");
         aux = aux->next;
     }
+    liberarLDE(&cabeza);
+    cola = NULL;
 }
 
 void ordenarPorMes(const Tveteranos veteranos, int mes) {
@@ -668,6 +722,9 @@ void ordenarPorMes(const Tveteranos veteranos, int mes) {
         }
     }
 
+    if (veteranosMes->cant == 0)
+        printf("No hay personas que cumplan años ese mes.\n");
+
     for (int pos = 0; pos < veteranosMes->cant; pos++) {
         printf("-------------------------------------------------\n");
         printf("Nombre: %s\n", veteranosMes->personas[pos].nombre);
@@ -682,5 +739,4 @@ void ordenarPorMes(const Tveteranos veteranos, int mes) {
         else
             printf("Fallecido el: %d / %d / %d\n", veteranosMes->personas[pos].fallecimiento.dia,veteranosMes->personas[pos].fallecimiento.mes,veteranosMes->personas[pos].fallecimiento.anio); 
     }
-    printf("-------------------------------------------------\n");
 }

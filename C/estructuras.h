@@ -60,6 +60,8 @@ void cargarArreglo(Tveteranos*);
 void cargarArchivo(const Tveteranos);
 Logico vacia(const Tveteranos);
 Logico llena(const Tveteranos);
+Logico isNumeric(char*);
+void numeroValido(int *numero);
 Logico validacionFecha(Tfecha);
 int calcularEdad(Tfecha);
 void recalcularEdades(Tveteranos);
@@ -74,6 +76,8 @@ void mostrarPorApellido(const Tveteranos, char* apellido);
 void modificar(Tveteranos, int dni);
 void mostrarFallecidos(const Tveteranos);
 void mostrarPorFuerza(const Tveteranos, Tfuerza fuerza);
+void liberarLSE(Tfallecidos**);
+void liberarLDE(TlistaFuerza**);
 void ordenarPorMes(const Tveteranos, int mes);
 
 #endif

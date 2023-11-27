@@ -24,21 +24,28 @@ void main()
                 insertar(veteranos, &nuevo);
                 break;
             case ELIMINAR:
+                printf("-------------------------------------------------\n");
+                printf("            SUPRIMIR USUARIO.\n");
+                printf("-------------------------------------------------\n");
                 printf("Ingrese DNI: ");
-                scanf("%d", &dni);
-                fgetc(stdin);
+                numeroValido(&dni);
                 suprimir(veteranos, dni);
                 break;
             case MODIFICAR:
+                printf("-------------------------------------------------\n");
+                printf("          MODIFICAR USUARIO.\n");
+                printf("-------------------------------------------------\n");
                 printf("Ingrese DNI: ");
-                scanf("%d", &dni);
-                fgetc(stdin);
+                numeroValido(&dni);
                 modificar(veteranos, dni);
                 break;
             case LISTODO:
                 mostrar(veteranos);
                 break;
             case LISAPELLIDO:
+                printf("-------------------------------------------------\n");
+                printf("      LISTADO DE PERSONAS POR APELLIDO.\n");
+                printf("-------------------------------------------------\n");
                 printf("Ingrese el apellido: ");
                 fgets(apellido, 20, stdin);
                 apellido[strlen(apellido)-1] = '\0';
@@ -48,14 +55,22 @@ void main()
                 mostrarFallecidos(veteranos);
                 break;
             case LISFUERZA:
+                printf("-------------------------------------------------\n");
+                printf("    LISTADO DE PERSONAS POR FUERZA.\n");
+                printf("-------------------------------------------------\n");
                 pedirFuerza(&fuerza);
                 mostrarPorFuerza(veteranos, fuerza);
                 break;
             case LISPORMES:
+                printf("-------------------------------------------------\n");
+                printf("      LISTADO DE PERSONAS POR MES.\n");
+                printf("-------------------------------------------------\n");
                 printf("Ingrese un mes: ");
-                do{
-                    scanf("%d", &mes);
-                } while(mes < 1 || mes > 12);
+                numeroValido(&mes);
+                while(mes < 1 || mes > 12){
+                    printf("Ingrese un mes valido: ");
+                    numeroValido(&mes);
+                }
                 ordenarPorMes(veteranos, mes);
                 break;
             case SALIR:
