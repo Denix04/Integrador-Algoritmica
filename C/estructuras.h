@@ -1,3 +1,7 @@
+// AUTORES
+// ASTRADA, CAMILA DNI: 43.132.086
+// DEBERNARDI, ALVARO DNI: 42.890.685
+
 #ifndef ESTRUCTURAS_H
 #define ESTRUCTURAS_H
 
@@ -55,29 +59,54 @@ typedef struct TlistaFuerza_{
     struct TlistaFuerza_* next;
 } TlistaFuerza;
 
-void menu(int*);
-void cargarArreglo(Tveteranos*);
-void cargarArchivo(const Tveteranos);
-Logico vacia(const Tveteranos);
-Logico llena(const Tveteranos);
-Logico isNumeric(char*);
-void numeroValido(int *numero);
-Logico validacionFecha(Tfecha);
-int calcularEdad(Tfecha);
-void recalcularEdades(Tveteranos);
-int buscarPosicion(const Tveteranos, const Tpersona*);
-Logico dniRepetido(const Tveteranos, int dni);
-void pedirFuerza(Tfuerza*);
-void cargarDatos(const Tveteranos, Tpersona*);
-void insertar(Tveteranos, Tpersona*);
-void suprimir(Tveteranos, int dni);
-void mostrar(const Tveteranos);
-void mostrarPorApellido(const Tveteranos, char* apellido);
-void modificar(Tveteranos, int dni);
-void mostrarFallecidos(const Tveteranos);
-void mostrarPorFuerza(const Tveteranos, Tfuerza fuerza);
-void liberarLSE(Tfallecidos**);
-void liberarLDE(TlistaFuerza**);
-void ordenarPorMes(const Tveteranos, int mes);
+// Declaracion de funciones:
+
+void menu(int*);        // muestra y da la opcion          
+
+void cargarArreglo(Tveteranos*);      // carga el arreglo con lo que haya en el registro
+
+void cargarArchivo(const Tveteranos);   // carga el archivo con lo que alla en al arreglo
+
+Logico vacia(const Tveteranos);    // dice si el arreglo esta vacio
+
+Logico llena(const Tveteranos);    // dice si el arreglo esta lleno
+
+Logico isNumeric(char*);     // devuelve verdadero si todos los caracteres de una cadena son digitos
+
+void numeroValido(int *numero);   // es para pedir numeros al usuario y filtrar letras  
+
+Logico validacionFecha(Tfecha);   // valida una fecha
+
+int calcularEdad(Tfecha);    // calcula le edad de una persona
+
+void recalcularEdades(Tveteranos);    // recalcula la edad de las personas (para que las edades esten actualizadas)
+
+int buscarPosicion(const Tveteranos, const Tpersona*);    // busca la posicion en la que deberia ser insertado una persona
+
+Logico dniRepetido(const Tveteranos, int dni);   // dice si un dni esta repetido
+
+void pedirFuerza(Tfuerza*);  // pide al usuario una fuerza
+
+void cargarDatos(const Tveteranos, Tpersona*);   // carga los datos de una persona
+
+void insertar(Tveteranos, Tpersona*);  // inserta a una persona en el arreglo
+
+void suprimir(Tveteranos, int dni);    // suprime a la persona con ese dni
+
+void mostrar(const Tveteranos);    // muestra todas las personas
+
+void mostrarPorApellido(const Tveteranos, char* apellido);    // muestra todas las personas 
+
+void modificar(Tveteranos, int dni);   // modifica los datos de una persona
+
+void mostrarFallecidos(const Tveteranos);   //muestra las personas fallecidas del arreglo
+
+void mostrarPorFuerza(const Tveteranos, Tfuerza fuerza);    // muestra todas las personas que coincidan con una fuerza
+
+void liberarLSE(Tfallecidos**);   // libera la lista de los fallecidos
+
+void liberarLDE(TlistaFuerza**);;   // libera la lista de la fuerza
+
+void ordenarPorMes(const Tveteranos, int mes);   // devuelve todos los que cumplan años en ese mes
 
 #endif

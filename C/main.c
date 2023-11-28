@@ -1,3 +1,7 @@
+// AUTORES
+// ASTRADA, CAMILA DNI: 43.132.086
+// DEBERNARDI, ALVARO DNI: 42.890.685
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

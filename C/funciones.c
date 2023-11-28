@@ -1,3 +1,7 @@
+// AUTORES
+// ASTRADA, CAMILA DNI: 43.132.086
+// DEBERNARDI, ALVARO DNI: 42.890.685
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "estructuras.h"
@@ -32,7 +36,8 @@ void cargarArreglo(Tveteranos *veteranos){
     Tpersona aux;
     *veteranos = (Tveteranos)malloc(sizeof(struct Tveteranos_));
     (*veteranos)->cant = 0;
-    f = fopen("malvinas.dat", "r");
+    if ((f = fopen("malvinas.dat", "r")) == NULL)
+        f = popen("malvinas.dat", "w");
 
     while (fread(&aux, sizeof(Tpersona), 1,f)) {
         (*veteranos)->personas[(*veteranos)->cant] = aux;
