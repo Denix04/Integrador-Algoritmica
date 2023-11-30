@@ -87,6 +87,8 @@ Logico dniRepetido(const Tveteranos, int dni);   // dice si un dni esta repetido
 
 void pedirFuerza(Tfuerza*);  // pide al usuario una fuerza
 
+void pedirFecha(Tfecha*, char*);   // pide al usuario una fecha y la asigna
+
 void cargarDatos(const Tveteranos, Tpersona*);   // carga los datos de una persona
 
 void insertar(Tveteranos, Tpersona*);  // inserta a una persona en el arreglo

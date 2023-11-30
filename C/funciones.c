@@ -9,6 +9,7 @@
 #include <time.h>
 #include <ctype.h>
 
+//Muestra las opciones del menú y pide la opción al usuario.
 void menu(int *opcion){
 
     printf("-------------------------------------------------\n");
@@ -31,6 +32,7 @@ void menu(int *opcion){
     } while (*opcion < 1 || *opcion > 9);
 }
 
+//Pasa los registros del archivo a un arreglo ordenandolos por apellido,nombre y luego DNI.
 void cargarArreglo(Tveteranos *veteranos){
     FILE *f;
     Tpersona aux;
@@ -39,13 +41,12 @@ void cargarArreglo(Tveteranos *veteranos){
     if ((f = fopen("malvinas.dat", "r")) == NULL)
         f = popen("malvinas.dat", "w");
 
-    while (fread(&aux, sizeof(Tpersona), 1,f)) {
-        (*veteranos)->personas[(*veteranos)->cant] = aux;
-        (*veteranos)->cant++;
-    }
+    while (fread(&aux, sizeof(Tpersona), 1,f))
+        insertar(*veteranos, &aux);
     fclose(f);
 }
 
+//cargael archivo con los registros del arreglo (opción 9);
 void cargarArchivo(const Tveteranos veteranos){
     FILE *f;
     Tpersona aux;
@@ -60,6 +61,7 @@ void cargarArchivo(const Tveteranos veteranos){
     fclose(f);
 }
 
+//devuelve VERDADERO si no hay registros en el arreglo y por ende en el archivo.
 Logico vacia(const Tveteranos veteranos){
     if (veteranos->cant == 0)
         return VERDADERO;
@@ -67,6 +69,7 @@ Logico vacia(const Tveteranos veteranos){
         return FALSO;
 }
 
+//devuelve VERDADERO cuando el arreglo esta lleno. por ende,la lista está llena.
 Logico llena(const Tveteranos veteranos){
     if (veteranos->cant == NMAX)
         return VERDADERO;
@@ -74,6 +77,7 @@ Logico llena(const Tveteranos veteranos){
         return FALSO;
 }
 
+//Valida que la fecha ingresada sea correcta.
 Logico validacionFecha(Tfecha fecha){
 
     if (fecha.mes < 1 || fecha.mes >12 || fecha.dia < 1 || fecha.dia>31)
@@ -88,6 +92,7 @@ Logico validacionFecha(Tfecha fecha){
     return VERDADERO;
 }
 
+//Devuelve VERDADERO si la cadena pasada como parametro es númerica
 Logico isNumeric(char *cadena){
     
     int i = 0;
@@ -102,6 +107,7 @@ Logico isNumeric(char *cadena){
     return VERDADERO;
 }
 
+//pide un numero en una variable cadena y chequea que efectivamente sea un número
 void numeroValido(int *numero){
     char cadena[20];
     scanf("%s", cadena);
@@ -115,6 +121,7 @@ void numeroValido(int *numero){
     *numero = atoi(cadena);
 }
 
+//busca la posición donde luego, con la acción insertar, se insertará el elemento de manera ordenada.
 int buscarPosicion(const Tveteranos veteranos, const Tpersona *persona){
     int pos = 0;
     Logico posEncontrada = FALSO;
@@ -124,9 +131,6 @@ int buscarPosicion(const Tveteranos veteranos, const Tpersona *persona){
 
     if (strcmp(persona->apellido, veteranos->personas[pos].apellido) == 0){
         do {
-            printf("hola %s-%d\n", veteranos->personas[pos].apellido, pos);
-            printf("%s\n", veteranos->personas[pos].nombre);
-            printf("%d\n\n", veteranos->cant);
             if (strcmp(persona->apellido, veteranos->personas[pos].apellido) != 0)
                 break;
             if (strcmp(persona->nombre, veteranos->personas[pos].nombre) < 0)
@@ -146,6 +150,7 @@ int buscarPosicion(const Tveteranos veteranos, const Tpersona *persona){
     return pos;
 }
 
+//Toma la fecha actual y la de nacimiento y calcula la edad.
 int calcularEdad(Tfecha nacimiento){
     time_t segundos = time(NULL);
     struct tm* fechaActual = localtime(&segundos);
@@ -157,11 +162,13 @@ int calcularEdad(Tfecha nacimiento){
     return edad;
 }
 
+//acción que recalcula edades cada vez que se ejecuta el programa.
 void recalcularEdades(Tveteranos veteranos){
     for(int pos = 0; pos < veteranos->cant; pos++)
         veteranos->personas[pos].edad = calcularEdad(veteranos->personas[pos].nacimiento);
 }
 
+//ve si el existe otra persona en el arreglo con ese DNI.
 Logico dniRepetido(const Tveteranos veteranos, int dni){
     int pos = 0;
     while (pos < veteranos->cant){
@@ -172,6 +179,7 @@ Logico dniRepetido(const Tveteranos veteranos, int dni){
     return FALSO;
 }
 
+//pide la fuerza y ve que no se ingrese una fuerza incorrecta.
 void pedirFuerza(Tfuerza *fuerza){
     int opcion;
     do{
@@ -202,6 +210,27 @@ void pedirFuerza(Tfuerza *fuerza){
     } while (opcion < 1 || opcion > 4);
 }
 
+//acción generica que pide una fecha. la utilizamos para pedir fecha de nacimiento y defunción. 
+void pedirFecha(Tfecha *fecha, char *cadena){
+    Logico fechaValida = VERDADERO;
+
+    do {
+        printf("Ingrese el dia de %s : ", cadena);
+        numeroValido(&fecha->dia);
+
+        printf("Ingrese el mes de %s : ", cadena);
+        numeroValido(&fecha->mes);
+
+        printf("Ingrese el año de %s : ", cadena);
+        numeroValido(&fecha->anio);
+
+        fechaValida = validacionFecha(*fecha);
+        if(!fechaValida)
+            printf("Fecha inválida. \n");
+    } while (!fechaValida);
+}
+
+//pide todos los datos y los carga en el registro. se utiliza esta acción en insertar registro.
 void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
     int opcion;
 
@@ -219,21 +248,15 @@ void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
 
     printf("Ingrese el DNI: ");
     numeroValido(&nuevo->DNI);
-    while (dniRepetido(veteranos, nuevo->DNI)){
-        printf("Ya existe una persona con ese DNI, ingrese nuevamente: ");
+    while (dniRepetido(veteranos, nuevo->DNI) || nuevo->DNI <= 0){
+        if (nuevo->DNI <= 0)
+            printf("DNI invalido, ingrese nuevamente: ");
+        else
+            printf("Ya existe una persona con ese DNI, ingrese nuevamente: ");
         numeroValido(&nuevo->DNI);
     }
 
-    do {
-        printf("Ingrese el dia de nacimiento: ");
-        numeroValido(&nuevo->nacimiento.dia);
-
-        printf("Ingrese el mes de nacimiento: ");
-        numeroValido(&nuevo->nacimiento.mes);
-
-        printf("Ingrese el año de nacimiento: ");
-        numeroValido(&nuevo->nacimiento.anio);
-    } while (!validacionFecha(nuevo->nacimiento));
+    pedirFecha(&nuevo->nacimiento, "nacimiento");
 
     nuevo->edad = calcularEdad(nuevo->nacimiento);
 
@@ -274,16 +297,7 @@ void cargarDatos(const Tveteranos veteranos, Tpersona* nuevo){
     } while (opcion != 0 && opcion != 1);
 
     if (!nuevo->VF){
-        do {
-            printf("Ingrese el dia de fallecimiento: ");
-            numeroValido(&nuevo->fallecimiento.dia);
-
-            printf("Ingrese el mes de fallecimiento: ");
-            numeroValido(&nuevo->fallecimiento.mes);
-
-            printf("Ingrese el año de fallecimiento: ");
-            numeroValido(&nuevo->fallecimiento.anio);
-        } while (!validacionFecha(nuevo->fallecimiento));
+        pedirFecha(&nuevo->fallecimiento, "fallecimiento");
     }
 
     printf("Ingrese el beneficio: ");
@@ -324,6 +338,7 @@ void insertar(Tveteranos veteranos, Tpersona* nuevo){
         printf("No es posible agregar miembros, lista llena.");
     else {
         pos = buscarPosicion(veteranos, nuevo);
+        //corre todos los registros para hacer lugar en insertar el registro en la posicion correcta.
         for (aux = veteranos->cant -1; pos <= aux; aux--)
             veteranos->personas[aux+1] = veteranos->personas[aux];
         veteranos->personas[pos] = *nuevo;
@@ -334,13 +349,13 @@ void insertar(Tveteranos veteranos, Tpersona* nuevo){
 void suprimir(Tveteranos veteranos, int dni){
     int pos = -1;
     Logico encontrado = FALSO;
-
+    //busca el usuario con el dni indicado.
     while (pos < veteranos->cant && encontrado == FALSO){
         pos = pos + 1;
         if (veteranos->personas[pos].DNI == dni)
             encontrado = VERDADERO;
     }
-
+    //mueve todos sobreescribiento el quese desea eliminar.
     for (pos; pos < veteranos->cant; pos++)
         veteranos->personas[pos] = veteranos->personas[pos+1];
     if (encontrado){
@@ -389,7 +404,9 @@ void mostrar(const Tveteranos veteranos){
 
 void mostrarPorApellido(const Tveteranos veteranos, char *apellido){
     int pos = 0, cant = 0;
-
+    
+    //recorre mientras el apellido de los registros sean menores o iguales al parametro apellido. mientras tanto, imprime los
+    //registro con ese apellido
     while (pos < veteranos->cant && strcmp(veteranos->personas[pos].apellido, apellido)<=0){
             
         if (strcmp(veteranos->personas[pos].apellido, apellido) == 0){
@@ -430,6 +447,7 @@ void modificar(Tveteranos veteranos, int dni){
     int pos, nuevaPos, opcion;
     Tpersona* modificado = (Tpersona*)malloc(sizeof(Tpersona));
 
+    //busca la posición del registro para modificar.
     for (pos = 0; pos < veteranos->cant && veteranos->personas[pos].DNI != dni; pos++)
         ;
 
@@ -471,16 +489,7 @@ void modificar(Tveteranos veteranos, int dni){
                 modificado->apellido[strlen(modificado->apellido)-1] = '\0';
                 break;
             case 3:
-                do {
-                    printf("Ingrese el dia de nacimiento: ");
-                    numeroValido(&modificado->nacimiento.dia);
-
-                    printf("Ingrese el mes de nacimiento: ");
-                    numeroValido(&modificado->nacimiento.mes);
-
-                    printf("Ingrese el año de nacimiento: ");
-                    numeroValido(&modificado->nacimiento.anio);
-                } while (!validacionFecha(modificado->nacimiento));
+                pedirFecha(&modificado->nacimiento, "nacimiento");
                 modificado->edad = calcularEdad(modificado->nacimiento);
                 break;
             case 4:
@@ -531,16 +540,7 @@ void modificar(Tveteranos veteranos, int dni){
                 } while (opcion != 0 && opcion != 1);
 
                 if (!modificado->VF){
-                    do {
-                        printf("Ingrese el dia de fallecimiento: ");
-                        numeroValido(&modificado->fallecimiento.dia);
-
-                        printf("Ingrese el mes de fallecimiento: ");
-                        numeroValido(&modificado->fallecimiento.mes);
-
-                        printf("Ingrese el año de fallecimiento: ");
-                        numeroValido(&modificado->fallecimiento.anio);
-                    } while (!validacionFecha(modificado->fallecimiento));
+                    pedirFecha(&modificado->fallecimiento, "fallecimiento");
                 }
                 break;
             case 11:
@@ -583,6 +583,7 @@ void modificar(Tveteranos veteranos, int dni){
         printf("No hay una persona con ese DNI\n");
 }
 
+
 void liberarLSE(Tfallecidos **fallecidos){
     Tfallecidos *aux, *aux2;  
     aux = *fallecidos;
@@ -613,6 +614,7 @@ void mostrarFallecidos(const Tveteranos veteranos){
     fallecidos = (Tfallecidos*)malloc(sizeof(Tfallecidos));
     fallecidos->next = NULL;
 
+    //se llena la lista con los fallecidos.
     aux = fallecidos;
     while (pos < veteranos->cant) {
         if (veteranos->personas[pos].VF == FALSO) {
@@ -625,6 +627,8 @@ void mostrarFallecidos(const Tveteranos veteranos){
         pos++;
     }
     aux = fallecidos->next;
+    
+    //se muestran
     if (aux == NULL){
         printf("-------------------------------------------------\n");
         printf("No hay fallecidos\n");
@@ -646,7 +650,8 @@ void mostrarFallecidos(const Tveteranos veteranos){
 void mostrarPorFuerza(const Tveteranos veteranos, Tfuerza fuerza){
     TlistaFuerza *cabeza, *cola, *nuevo, *aux;
     int pos;
-
+    
+    //inicializacion de la lista.
     cabeza = (TlistaFuerza*)malloc(sizeof(TlistaFuerza));
     cabeza->back = NULL;
     cola = (TlistaFuerza*)malloc(sizeof(TlistaFuerza));
@@ -655,7 +660,8 @@ void mostrarPorFuerza(const Tveteranos veteranos, Tfuerza fuerza){
     cola->back = cabeza;
     aux = cabeza;
 
-    for (pos = 1; pos <= veteranos->cant; pos++) {
+    //recorre el arreglo y llena la lista con las personas de la fuerza pedida como parámetro.
+    for (pos = 0; pos < veteranos->cant; pos++) {
         if (veteranos->personas[pos].fuerza == fuerza) {
             nuevo = (TlistaFuerza*)malloc(sizeof(TlistaFuerza));
             nuevo->persona = veteranos->personas[pos];
@@ -671,11 +677,12 @@ void mostrarPorFuerza(const Tveteranos veteranos, Tfuerza fuerza){
         printf("-------------------------------------------------\n");
         printf("No se encuentran personas pertenecientes a esa fuerza\n");
     }
+    //imprime toda la lista.
     while (aux->next != NULL) {
         printf("-------------------------------------------------\n");
         printf("Nombre: %s\n", aux->persona.nombre);
         printf("Apellido: %s\n", aux->persona.apellido);
-        printf("Dni: %d", aux->persona.DNI);
+        printf("Dni: %d\n", aux->persona.DNI);
         printf("Fecha de Nacimiento: %d / %d / %d\n", aux->persona.nacimiento.dia, aux->persona.nacimiento.mes, aux->persona.nacimiento.anio);
         printf("edad: %d\n", aux->persona.edad);
         printf("Ciudad De residencia: %s\n", aux->persona.ciudad);
@@ -707,9 +714,10 @@ void mostrarPorFuerza(const Tveteranos veteranos, Tfuerza fuerza){
 void ordenarPorMes(const Tveteranos veteranos, int mes) {
     Tveteranos veteranosMes;
     veteranosMes = (struct Tveteranos_*)malloc(sizeof(struct Tveteranos_));
-    veteranosMes->cant = 0;
+    veteranosMes->cant = 0; //inicializa arreglo nuevo.
     Tpersona aux;
 
+    //añade al nuevo arreglo las personas que nacieron en el mes.
     for (int pos = 0; pos<veteranos->cant; pos++){
         if (veteranos->personas[pos].nacimiento.mes == mes) {
             veteranosMes->personas[veteranosMes->cant] = veteranos->personas[pos];
@@ -717,6 +725,7 @@ void ordenarPorMes(const Tveteranos veteranos, int mes) {
         }
     }
 
+    //lo ordena con el metodo bubblesort por dia de nacimiento.
     for (int i = veteranosMes->cant -1; i > 0; i--) {
         for (int j = 0; j < i; j++) {
             if (veteranosMes->personas[j].nacimiento.dia > veteranosMes->personas[j + 1].nacimiento.dia){
@@ -730,6 +739,7 @@ void ordenarPorMes(const Tveteranos veteranos, int mes) {
     if (veteranosMes->cant == 0)
         printf("No hay personas que cumplan años ese mes.\n");
 
+    //muestra todo el arreglo
     for (int pos = 0; pos < veteranosMes->cant; pos++) {
         printf("-------------------------------------------------\n");
         printf("Nombre: %s\n", veteranosMes->personas[pos].nombre);

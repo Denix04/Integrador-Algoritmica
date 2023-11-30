@@ -21,66 +21,81 @@ void main()
 
     do {
         menu(&opcion);
-        switch (opcion){
-            case INSERTAR:
-                Tpersona nuevo;
-                cargarDatos(veteranos, &nuevo);
-                insertar(veteranos, &nuevo);
-                break;
-            case ELIMINAR:
-                printf("-------------------------------------------------\n");
-                printf("            SUPRIMIR USUARIO.\n");
-                printf("-------------------------------------------------\n");
-                printf("Ingrese DNI: ");
-                numeroValido(&dni);
-                suprimir(veteranos, dni);
-                break;
-            case MODIFICAR:
-                printf("-------------------------------------------------\n");
-                printf("          MODIFICAR USUARIO.\n");
-                printf("-------------------------------------------------\n");
-                printf("Ingrese DNI: ");
-                numeroValido(&dni);
-                modificar(veteranos, dni);
-                break;
-            case LISTODO:
-                mostrar(veteranos);
-                break;
-            case LISAPELLIDO:
-                printf("-------------------------------------------------\n");
-                printf("      LISTADO DE PERSONAS POR APELLIDO.\n");
-                printf("-------------------------------------------------\n");
-                printf("Ingrese el apellido: ");
-                fgets(apellido, 20, stdin);
-                apellido[strlen(apellido)-1] = '\0';
-                mostrarPorApellido(veteranos, apellido);
-                break;
-            case LISFALLECIDOS:
-                mostrarFallecidos(veteranos);
-                break;
-            case LISFUERZA:
-                printf("-------------------------------------------------\n");
-                printf("    LISTADO DE PERSONAS POR FUERZA.\n");
-                printf("-------------------------------------------------\n");
-                pedirFuerza(&fuerza);
-                mostrarPorFuerza(veteranos, fuerza);
-                break;
-            case LISPORMES:
-                printf("-------------------------------------------------\n");
-                printf("      LISTADO DE PERSONAS POR MES.\n");
-                printf("-------------------------------------------------\n");
-                printf("Ingrese un mes: ");
-                numeroValido(&mes);
-                while(mes < 1 || mes > 12){
-                    printf("Ingrese un mes valido: ");
+        if (vacia(veteranos)){
+            switch (opcion){
+                case INSERTAR:
+                    Tpersona nuevo;
+                    cargarDatos(veteranos, &nuevo);
+                    insertar(veteranos, &nuevo);
+                    break;
+                case SALIR:
+                    cargarArchivo(veteranos); 
+                    break;
+                default :
+                    if (opcion >1 && opcion <9)
+                        printf("Esa opción no se encuentra disponible porque la lista está vacía.\n");
+            }
+        } else {
+            switch (opcion){
+                case INSERTAR:
+                    Tpersona nuevo;
+                    cargarDatos(veteranos, &nuevo);
+                    insertar(veteranos, &nuevo);
+                    break;
+                case ELIMINAR:
+                    printf("-------------------------------------------------\n");
+                    printf("            SUPRIMIR USUARIO.\n");
+                    printf("-------------------------------------------------\n");
+                    printf("Ingrese DNI: ");
+                    numeroValido(&dni);
+                    suprimir(veteranos, dni);
+                    break;
+                case MODIFICAR:
+                    printf("-------------------------------------------------\n");
+                    printf("          MODIFICAR USUARIO.\n");
+                    printf("-------------------------------------------------\n");
+                    printf("Ingrese DNI: ");
+                    numeroValido(&dni);
+                    modificar(veteranos, dni);
+                    break;
+                case LISTODO:
+                    mostrar(veteranos);
+                    break;
+                case LISAPELLIDO:
+                    printf("-------------------------------------------------\n");
+                    printf("      LISTADO DE PERSONAS POR APELLIDO.\n");
+                    printf("-------------------------------------------------\n");
+                    printf("Ingrese el apellido: ");
+                    fgets(apellido, 20, stdin);
+                    apellido[strlen(apellido)-1] = '\0';
+                    mostrarPorApellido(veteranos, apellido);
+                    break;
+                case LISFALLECIDOS:
+                    mostrarFallecidos(veteranos);
+                    break;
+                case LISFUERZA:
+                    printf("-------------------------------------------------\n");
+                    printf("    LISTADO DE PERSONAS POR FUERZA.\n");
+                    printf("-------------------------------------------------\n");
+                    pedirFuerza(&fuerza);
+                    mostrarPorFuerza(veteranos, fuerza);
+                    break;
+                case LISPORMES:
+                    printf("-------------------------------------------------\n");
+                    printf("      LISTADO DE PERSONAS POR MES.\n");
+                    printf("-------------------------------------------------\n");
+                    printf("Ingrese un mes: ");
                     numeroValido(&mes);
-                }
-                ordenarPorMes(veteranos, mes);
-                break;
-            case SALIR:
-                cargarArchivo(veteranos); 
-                break;
+                    while(mes < 1 || mes > 12){
+                        printf("Ingrese un mes valido: ");
+                        numeroValido(&mes);
+                    }
+                    ordenarPorMes(veteranos, mes);
+                    break;
+                case SALIR:
+                    cargarArchivo(veteranos); 
+                    break;
+            }
         }
     } while (opcion !=SALIR);
-
 }
